@@ -113,13 +113,16 @@ public class JogoLancamentoDado {
     }
 
     public static int[] jogo(int dado){
+        Scanner input = new Scanner(System.in);
         Random sorteio = new Random();
         int[] rodada = new int[3];
         //rodada[0] > número sorteado,   rodada[1] > palpite do jogador,   rodada[2] > pontos da rodada
 
         rodada[0] = sorteio.nextInt(dado) + 1;
         System.out.printf("\nO D%d foi lançado! Faça seu palpite, ou digite -1 para sair: ", dado);
-        rodada[1] = new java.util.Scanner(System.in).nextInt();
+        for (rodada[1] = input.nextInt(); rodada[1] == 0 || rodada[1] < -1 || rodada[1] > dado; rodada[1] = input.nextInt()){
+            System.out.printf("Valor inválido. As possibilidades do D%d são números entre 1 e %d. Dê seu palpite, ou digite -1 para sair: ", dado, dado);
+        }
 
         if (rodada[1] != -1){
             if (rodada[0] == rodada[1]){
@@ -201,7 +204,8 @@ public class JogoLancamentoDado {
     }
 
     public static void mostraPlacar (List<Integer> registro, int zen, int desafio, int morte_subita){
-        int total_pontos = 0;
+        int total_pontos, erros, passou_perto, acertos;
+        total_pontos = erros = passou_perto = acertos = 0;
         String resultado, pontos;
         System.out.println("\n\n-------------------------------------------------------------\n\n");
         System.out.println("\nPLACAR:\n");
@@ -211,17 +215,21 @@ public class JogoLancamentoDado {
                 resultado = "ACERTOU";
                 pontos = "+10";
                 total_pontos += 10;
+                acertos++;
             } else if (Math.abs(registro.get(i) - registro.get(i+1)) == 1){
                 resultado = "PASSOU PERTO";
                 pontos = "+5";
                 total_pontos += 5;
+                passou_perto++;
             } else {
                 resultado = "ERROU";
                 pontos = " 0";
+                erros++;
             }
             System.out.printf("%-20s%-20s%-20s%-20s\n",registro.get(i),registro.get(i+1), resultado, pontos);
         }
         System.out.printf("%-23s%s\n","Total de pontos:", total_pontos);
+        System.out.printf("O dado foi lançado %d vezes!   ACERTOS: %d   PASSOU PERTO: %d   ERROS: %d\n", registro.size()/2, acertos, passou_perto, erros);
         System.out.println("\nRECORDES:");
         System.out.printf("%-45s%s\n","Maior sequencia de acertos (modo Zen):", zen);
         System.out.printf("%-45s%s\n","Modo Desafio:", desafio + " pontos");
